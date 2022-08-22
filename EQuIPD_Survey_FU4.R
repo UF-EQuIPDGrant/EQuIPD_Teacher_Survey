@@ -12,29 +12,34 @@ library(scales)
 Q1Sres <- read_excel("Data/Student Interviews_Dulany.xlsx", sheet=1)
 Q1SresSel<- select(Q1Sres, Student_Code, Quote)
 
-remove_words <-data.frame("word"= c("lot", "um", "it's","it", "uh", "ive", "that's"))
+remove_words <-data.frame("word"= c("lot", "um", "it's","it", "uh", "ive", "that's")) 
+#create a data set called remove words
+#removes words that are in quotes (data cleaning)
 
-Q1Srestidy<-unnest_tokens(Q1SresSel, word, Quote)
+Q1Srestidy<-unnest_tokens(Q1SresSel, word, Quote) 
+#breaking up all of the words in the response 
 
 Q1Sres_remove<- anti_join(Q1Srestidy,remove_words) #remove repeat words
 
 Q1Sresclean<-anti_join(Q1Sres_remove, stop_words)
+#removing words from a data base that has common fillers
 
 Q1Sres_counts <- count(Q1Sresclean, word, sort = TRUE)
 
 library(wordcloud2)
 wordcloud2(Q1Sres_counts)
 
+#SENTIMENT ANALYSIS 
 afinn <- get_sentiments("afinn")
 bing <- get_sentiments("bing")
 nrc <- get_sentiments("nrc")
 loughran <- get_sentiments("loughran")
-
+#inner_join taking data set and comparing it to dictionary and adding sentiment 
 sentiment_afinn <- inner_join(Q1Sresclean, afinn, by = "word")
 sentiment_bing <- inner_join(Q1Sresclean, bing, by = "word")
 sentiment_nrc <- inner_join(Q1Sresclean, nrc, by = "word")
 sentiment_loughran <- inner_join(Q1Sresclean, loughran, by = "word")
-
+#counting sentiments 
 summary_bing <- count(sentiment_bing, sentiment, sort = TRUE)
 summary_afinn <- count(sentiment_afinn, value, sort = TRUE)
 summary_nrc <- count(sentiment_nrc, sentiment, sort = TRUE)
