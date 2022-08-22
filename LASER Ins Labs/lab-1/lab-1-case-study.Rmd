@@ -283,7 +283,7 @@ Now let's read our data into our Environment and assign it to a variable
 name so we can work with it like any other object in R.
 
 ```{r, echo = TRUE}
-opd_survey <- read_csv("data/opd_survey.csv")
+opd_survey <- read_csv("~/Documents/GitHub/EQuIPD_Teacher_Survey/LASER Ins Labs/lab-1/data/opd_survey.csv")
 ```
 
 Notice that `read_csv()` dealt with the issues of duplicate column names
