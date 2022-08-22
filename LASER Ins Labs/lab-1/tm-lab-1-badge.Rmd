@@ -1,0 +1,120 @@
+---
+title: 'Intro to TM Badge'
+subtitle: "LASER Institute TM Learning Lab 1"
+author: "Krista Dulany"
+date: "`r format(Sys.Date(),'%B %e, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](img/tmb.png){width="300"}
+
+The final activity for each learning lab provides space to work with data and to reflect on how the concepts and techniques introduced in each lab might apply to your own research.
+
+To earn a badge for each lab, you are required to respond to a set of prompts for two parts: 
+
+-   In Part I, you will reflect on your understanding of key concepts and begin to think about potential next steps for your own study.
+
+-   In Part II, you will create a simple data product in R that demonstrates your ability to apply a data analysis technique introduced in this learning lab.
+
+### Part I: Reflect and Plan
+
+Use the institutional library (e.g. [NCSU Library](https://www.lib.ncsu.edu/#articles)), [Google Scholar](https://scholar.google.com/) or search engine to locate a research article, presentation, or resource that applies text mining to an educational context or topic of interest. More specifically, **locate a text mining study that visualize text data.**
+
+1.  Provide an APA citation for your selected study.
+
+    -   Okoye, K., Arrona-Palacios, A., Camacho-Zuñiga, C., Hammout, N., Nakamura, E. L., Escamilla, J., & Hosseini, S. (2020). Impact of students evaluation of teaching: a text analysis of the teachers qualities by gender. International Journal of Educational Technology in Higher Education, 17(1). <https://doi.org/10.1186/s41239-020-00224-z>
+
+2.  How does the visualization address research questions?
+
+    -   this paper proposes an Educational Process and Data Mining (EPDM) model that leverages the perspectives or opinions of the students to provide useful evalutations related to gender.
+
+Draft a research question for a population you may be interested in studying, or that would be of interest to educational researchers, and that would require the collection of text data and answer the following questions:
+
+1.  What text data would need to be collected?
+
+    -   Study the growth of teacher understanding of concepts taught in PD series over time and to get information to inform PD decisions.
+
+2.  For what reason would text data need to be collected in order to address this question?
+
+    -   Need teacher understanding of concepts and opinions and feedback on PDs. This is easy to collect in brief surveys at the start and end of sessions.
+
+3.  Explain the analytical level at which these text data would need to be collected and analyzed.
+
+    -   Data would need to collected, cleaned, tokenized, followed by sentiment analysis in regards to conceptual knowledge understanding of the PD topic and to look at the sentiments of the experience in the PD.
+
+### Part II: Data Product
+
+Use your case study file to create a new word cloud that does not include words that would give you important information about teachers' experiences with professional development. (For example, we did not include "University" in the word cloud describing where scholar came from as it occurs everywhere).
+
+I highly recommend creating a new R script in your lab-1 folder to complete this task. When your code is ready to share, use the code chunk below to share the final code for your model and answer the questions that follow.
+
+```{r, my-data-product}
+# YOUR FINAL CODE HERE
+library(tidyverse)
+library(tidytext)
+library(dplyr)
+library(readr)
+library(tidyr)
+library(rtweet)
+library(writexl)
+library(readxl)
+library(tidytext)
+library(textdata)
+library(ggplot2)
+library(textdata)
+library(scales)
+
+##This is my own data, let me know if you need the document to check/run
+library(readr)
+Data_TM_Badge_One_Dulany <- read_csv("data/Data_TM_Badge_One_Dulany.csv")
+springfufour <- read_csv("data/Data_TM_Badge_One_Dulany.csv")
+#Read in data sheet
+springfufoursel<- select(springfufour, Q3, Q4) #select data columns
+springfufour_sliced <- slice(springfufoursel, -1, -2) # remove data headers rows 1+2 from qualtrics data
+head(springfufour_sliced)
+
+springtidy<-unnest_tokens(springfufour_sliced, word, Q4) #tokenize quotes
+springclean<-anti_join(springtidy, stop_words) #remove the stop words
+head(springclean)
+
+spring_counts <- count(springclean, word, sort = TRUE) #count words
+head(spring_counts) #"Students" and "Teachers" or "Teaching" are a main words that are taking focus in the word cloud and are a words that can be removed
+
+library(wordcloud2) #word cloud package
+
+```
+
+```{r, FINAL PRODUCT}
+# Word Cloud 2 with text removed - 
+#Wordcloud with removed words
+remove_words <-data.frame("word"= c("remote", "teach", "teaching", "students"))
+spring_remove <- anti_join(springtidy,remove_words) #remove repeat words
+springclean2<-anti_join(spring_remove, stop_words) #remove the stop words 2
+spring_counts2 <- count(springclean2, word, sort = TRUE) #count words 2
+
+
+wordcloud2(spring_counts2) #run wordcloud
+
+```
+
+### Knit & Submit
+
+Congratulations, you've completed your Intro to text mining Badge! Complete the following steps to submit your work for review:
+
+1.  Change the name of the `author:` in the [YAML header](https://monashdatafluency.github.io/r-rep-res/yaml-header.html) at the very top of this document to your name. As noted in [Reproducible Research in R](https://monashdatafluency.github.io/r-rep-res/index.html), The YAML header controls the style and feel for knitted document but doesn't actually display in the final output.
+
+2.  Click the yarn icon above to "knit" your data product to a [HTML](https://bookdown.org/yihui/rmarkdown/html-document.html) file that will be saved in your R Project folder.
+
+3.  Commit your changes in GitHub Desktop and push them to your online GitHub repository.
+
+4.  Publish your HTML page the web using one of the following [publishing methods](https://rpubs.com/cathydatascience/518692):
+
+    -   Publish on [RPubs](https://rpubs.com) by clicking the "Publish" button located in the Viewer Pane when you knit your document. Note, you will need to quickly create a RPubs account.
+
+    -   Publishing on GitHub using either [GitHub Pages](https://pages.github.com) or the [HTML previewer](http://htmlpreview.github.io).
+
+5.  Post a new discussion on GitHub to our [Text mining Badges forum](https://github.com/orgs/laser-institute/teams/network-analysis/discussions/3). In your post, include a link to your published web page and a short reflection highlighting one thing you learned from this lab and one thing you'd like to explore further.
